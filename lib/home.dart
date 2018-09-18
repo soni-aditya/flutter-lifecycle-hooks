@@ -5,7 +5,47 @@ class Home extends StatefulWidget {
   _HomeState createState() => _HomeState();
 }
 
-class _HomeState extends State<Home> {
+class _HomeState extends State<Home> with WidgetsBindingObserver {
+  static int data;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    data = 0;
+    print('DATA : $data');
+    setState(() {});
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    data = 5;
+    print('DATA : $data');
+    super.dispose();
+  }
+
+  AppLifecycleState appLifecycleState;
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    switch (state) {
+      case AppLifecycleState.paused:
+        data = 1;
+        break;
+      case AppLifecycleState.inactive:
+        data = 2;
+        break;
+      case AppLifecycleState.resumed:
+        data = 3;
+        break;
+      case AppLifecycleState.suspending:
+        data = 4;
+        break;
+    }
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -19,6 +59,7 @@ class _HomeState extends State<Home> {
             color: (orientation == Orientation.portrait)
                 ? Colors.amber
                 : Colors.purple,
+            child: Text(data.toString()),
           ),
         );
       }),
